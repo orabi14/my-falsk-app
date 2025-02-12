@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, validators
 from dotenv import load_dotenv
@@ -15,10 +15,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 # Initialize Flask application using factory pattern
 def create_app():
     app = Flask(__name__)
-    
+
     # Configuration
     app.config.update(
         SECRET_KEY=os.getenv('SECRET_KEY', 'dev-secret-key'),
@@ -29,9 +30,15 @@ def create_app():
 
     # Form classes
     class ContactForm(FlaskForm):
-        name = StringField('Name', [validators.InputRequired(), validators.Length(min=2, max=50)])
-        email = StringField('Email', [validators.InputRequired(), validators.Email()])
-        message = TextAreaField('Message', [validators.InputRequired(), validators.Length(min=10, max=500)])
+        name = StringField(
+            'Name', [validators.InputRequired(), validators.Length(min=2, max=50)]
+        )
+        email = StringField(
+            'Email', [validators.InputRequired(), validators.Email()]
+        )
+        message = TextAreaField(
+            'Message', [validators.InputRequired(), validators.Length(min=10, max=500)]
+        )
 
     # Error handlers
     @app.errorhandler(404)
@@ -60,16 +67,16 @@ def create_app():
                 name = form.name.data
                 email = form.email.data
                 message = form.message.data
-                
+
                 # Log message instead of print
                 logger.info(f"New contact message from {name} ({email}): {message}")
-                
+
                 # TODO: Add email sending logic here
                 # TODO: Store message in database
-                
+
                 flash('Your message has been sent successfully!', 'success')
                 return redirect(url_for('home'))
-                
+
             except Exception as e:
                 logger.error(f"Error processing contact form: {str(e)}")
                 flash('An error occurred while sending your message. Please try again.', 'danger')
@@ -79,7 +86,10 @@ def create_app():
 
     return app
 
+
 if __name__ == '__main__':
     app = create_app()
-    app.run(host=os.getenv('FLASK_HOST', '0.0.0.0'), 
-            port=int(os.getenv('FLASK_PORT', 5000)))
+    app.run(
+        host=os.getenv('FLASK_HOST', '0.0.0.0'),
+        port=int(os.getenv('FLASK_PORT', 5000))
+    )

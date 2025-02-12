@@ -52,7 +52,7 @@ jobs:
 
       - name: Run unit tests
         run: |
-          pytest --cov=app tests/
+          PYTHONPATH=. pytest --cov=app tests/
 
   security:
     runs-on: ubuntu-latest
